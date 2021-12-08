@@ -5,6 +5,29 @@ const tours = JSON.parse(
     fs.readFileSync(`${__dirname}/../starter/dev-data/data/tours-simple.json`)
 );
 
+//middleware functions have access to next & val
+exports.checkID = (req, res, next, val) => {
+    console.log(`Tour id is: ${val}`);
+    if (val > tours.length) {
+        return res.status(404).json({
+            status: 'failed',
+            message: 'Invalid ID'
+        })
+    }
+    //remember to include next();
+    next();
+}
+
+exports.checkBody = (req, res, next) => {
+    if(!req.body.name || !req.body.price) {
+        return res.status(400).json({
+            status: 'failed',
+            message: 'missing name or price'
+        })
+    }
+    console.log('Hello from checkBody, passed...')
+    next();
+};
 
 // Route Handlers
 exports.getAllTours = (req, res) => {
@@ -22,14 +45,6 @@ exports.getAllTours = (req, res) => {
 };
 
 exports.updateTour = (req, res) => {
-    
-    if (req.params.id * 1 > tours.length) {
-        return res.status(404).send({
-            status: 'failed',
-            message: 'Invalid ID'
-        })
-    }
-
     res.status(200).json({
         status: 'success',
         data:  { 
@@ -38,16 +53,7 @@ exports.updateTour = (req, res) => {
     })
 };
 
-exports.deleteTour = (req, res) => {
-    
-    if (req.params.id * 1 > tours.length) {
-        return res.status(404).send({
-            status: 'failed',
-            message: 'Invalid ID'
-        })
-    }
-
-    //204, no content.
+exports.deleteTour = (req, res) => {    //204, no content.
     res.status(204).json({
         status: 'success',
         data:  null
@@ -85,14 +91,6 @@ exports.getTour = (req, res) => {
     const id = req.params.id * 1;
 
     const tour = tours.find(el => el.id === id)
-
-    if (!tour) {
-        return res.status(404).send({
-            status: 'failed',
-            message: 'Invalid ID'
-        })
-    }
-
     //formatted using jsend specification.
     res.status(200).json({ 
         status: 'success',
