@@ -19,16 +19,16 @@ const Tour = require("../models/tourModel");
 //     next();
 // }
 
-exports.checkBody = (req, res, next) => {
-    if(!req.body.name || !req.body.price) {
-        return res.status(400).json({
-            status: 'failed',
-            message: 'missing name or price'
-        })
-    }
-    console.log('Hello from checkBody, passed...')
-    next();
-};
+// exports.checkBody = (req, res, next) => {
+//     if(!req.body.name || !req.body.price) {
+//         return res.status(400).json({
+//             status: 'failed',
+//             message: 'missing name or price'
+//         })
+//     }
+//     console.log('Hello from checkBody, passed...')
+//     next();
+// };
 
 // Route Handlers
 exports.getAllTours = (req, res) => {
@@ -61,14 +61,23 @@ exports.deleteTour = (req, res) => {    //204, no content.
     })
 };
 
-exports.createTour = (req, res) => {
-    //send response 201 and new tour object back to client.
-    res.status(201).json({
-        status: 'success',
-        // data: {
-        //     tour: newTour
-        // }
-    })
+exports.createTour = async (req, res) => {
+    try{
+        const newTour = await Tour.create(req.body);
+        //send response 201 and new tour object back to client.
+        res.status(201).json({
+            status: 'success',
+            data: {
+                tour: newTour
+            }
+        })
+    }catch(err) {
+        res.status(400).json({
+            status: 'fail',
+            message: 'Invalid data sent!'
+        })
+    }
+    
     // middleware 
     //calculate newId by getting last tour id in array and incrementing.
     // const newId = tours[tours.length - 1].id + 1;
