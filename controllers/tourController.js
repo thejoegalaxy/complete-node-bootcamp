@@ -30,15 +30,34 @@ const Tour = require("../models/tourModel");
 //     next();
 // };
 
+
 // Route Handlers
 exports.getAllTours = async (req, res) => {
     try{
-        //.find will return all tours when no parameter provided.
-        // awaiting result.
-        const tours = await Tour.find();
-        //formatted using jsend specification.
-        //console.log(req.requestTime);
+        //BUILD QUERY
+        //make a copy of the query object.
+        const queryObj = {...req.query};
+        //array of fields that we want to delete from queryObj.
+        const excludedFields = ['page', 'sort', 'limit', 'fields'];
+        //for each field in excludedFields, delete it from the queryObj
+        //ForEach because we don't want to save a new array
+        excludedFields.forEach(el => delete queryObj[el]);
 
+        console.log(req.query, queryObj);
+        
+        //mongoose methods.
+        //find returns a query that's why we are able to chain the below methods.
+
+        const query = Tour.find(queryObj);
+            // .where('duration')
+            // .equals(5)
+            // .where('difficulty')
+            // .equals('easy');
+
+        //EXECUTE QUERY
+        const tours = await query;
+
+        //SEND RESPONSE
         res.status(200).json({ 
             status: 'success',
             //requestedAt: req.requestTime, //setting header property for requesteAt time.

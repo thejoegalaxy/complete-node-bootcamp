@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+
 //configuration file for environment variables
+dotenv.config({ path: './config.env' });
+
 //importing app
 const app = require('./app');
-
-dotenv.config({ path: './config.env' });
 
 // create DB var by getting config.env
 // DB password & replacing placeholder.
