@@ -74,11 +74,14 @@ exports.getAllTours = async (req, res) => {
             // sort('price ratingsAverage')
         } else {
             //default sort criteria, if none specified.
-            query = query.sort('-createdAt');
+            //query = query.sort('-createdAt');
+            //had to adjust default sorting to _id for paging to work.
+            query = query.sort('_id')
         }
 
         // 3. Field limiting.
         if(req.query.fields) {
+            console.log('field limiting...')
             const fields = req.query.fields.split(',').join(' ');
             query = query.select(fields);
         } else {
@@ -87,15 +90,30 @@ exports.getAllTours = async (req, res) => {
             query = query.select('-__v');
         }
 
+        //4. Paginations.
+        //page=2&limit=10, page 1: 1-10, page 2: 11-20, page 3 21-30
+        //we will calculate the skip value based on page value
+        const page = req.query.page * 1 || 1;
+        const limit = req.query.limit * 1 || 100;
+        const skip = (page-1) * limit;
+        //console.log(page);
+        //console.log(skip);
+
+        query = query.skip(skip).limit(limit);
+
+        //check if paging beyond number of available pages.
+        if(req.query.page) {
+            const numTours = await Tour.countDocuments();
+            if(skip >= numTours) throw new Error('This page does not exist');
+        }
+
         //EXECUTE QUERY
         const tours = await query;
+        //query.sort().select().skip().limit();
+        //each of these queries returns a object and we can chain them.
+        // by await.
 
-        // const query = Tour.find()
-            // .where('duration')
-            // .equals(5)
-            // .where('difficulty')
-            // .equals('easy');
-
+        
         //SEND RESPONSE
         res.status(200).json({ 
             status: 'success',
@@ -109,7 +127,7 @@ exports.getAllTours = async (req, res) => {
     }catch (err) {
         res.status(404).json({
             status: 'fail',
-            message: err
+            message: err.message
         });
     }
 };
