@@ -34,7 +34,10 @@ const Tour = require("../models/tourModel");
 // Route Handlers
 exports.getAllTours = async (req, res) => {
     try{
+        console.log(req.query);
+
         //BUILD QUERY
+        // 1a. Filtering
         //make a copy of the query object.
         const queryObj = {...req.query};
         //array of fields that we want to delete from queryObj.
@@ -43,19 +46,38 @@ exports.getAllTours = async (req, res) => {
         //ForEach because we don't want to save a new array
         excludedFields.forEach(el => delete queryObj[el]);
 
-        console.log(req.query, queryObj);
+        //console.log(req.query, queryObj);
         
         //mongoose methods.
         //find returns a query that's why we are able to chain the below methods.
 
-        const query = Tour.find(queryObj);
+        // 1b. Advanced filtering.
+        //convert obj to string.
+        // use let so we can transmute queryStr.
+        let queryStr = JSON.stringify(queryObj);
+
+        //{ duration: { gte: '5' }, difficulty: 'easy' }
+        // { difficulty: 'easy', duration: {$gte: 5}}
+        // gte, gt, lte, lt
+        // \b any of these, /g all occurances, 
+        // replace the match with $match
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+        console.log(JSON.parse(queryStr));
+        
+        let query = Tour.find(JSON.parse(queryStr));
+
+        //2. Sorting
+        if(req.query.sort){
+            query = query.sort(req.query.sort);
+        }
+        //EXECUTE QUERY
+        const tours = await query;
+
+        // const query = Tour.find()
             // .where('duration')
             // .equals(5)
             // .where('difficulty')
             // .equals('easy');
-
-        //EXECUTE QUERY
-        const tours = await query;
 
         //SEND RESPONSE
         res.status(200).json({ 
