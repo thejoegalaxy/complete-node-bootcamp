@@ -62,14 +62,21 @@ exports.getAllTours = async (req, res) => {
         // \b any of these, /g all occurances, 
         // replace the match with $match
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
-        console.log(JSON.parse(queryStr));
+        //console.log(JSON.parse(queryStr));
         
         let query = Tour.find(JSON.parse(queryStr));
 
-        //2. Sorting
+        //2. Sorting, sort=-, on the query will cause a descending sort.
         if(req.query.sort){
-            query = query.sort(req.query.sort);
+            const sortBy = req.query.sort.split(',').join(' ');
+            //console.log(sortBy);
+            query = query.sort(sortBy);
+            // sort('price ratingsAverage')
+        } else {
+            //default sort criteria, if none specified.
+            query = query.sort('-createdAt');
         }
+
         //EXECUTE QUERY
         const tours = await query;
 
