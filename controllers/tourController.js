@@ -1,5 +1,6 @@
 //const fs = require('fs');
 const Tour = require("../models/tourModel");
+const APIFeatures = require("../utils/apiFeatures");
 
 //read once into variable tours.
 // const tours = JSON.parse(
@@ -30,90 +31,28 @@ const Tour = require("../models/tourModel");
 //     next();
 // };
 
+//middleware for aliasTopTours
+exports.aliasTopTours = (req, res, next) => {
+    console.log('aliasTopTours...');
+    req.query.limit = '5';
+    req.query.sort = '-ratingsAverage,price';
+    req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+    next();
+};
 
 // Route Handlers
 exports.getAllTours = async (req, res) => {
     try{
-        //console.log(req.query);
-
-        //BUILD QUERY
-        // 1a. Filtering
-        //make a copy of the query object.
-        const queryObj = {...req.query};
-        //array of fields that we want to delete from queryObj.
-        const excludedFields = ['page', 'sort', 'limit', 'fields'];
-        //for each field in excludedFields, delete it from the queryObj
-        //ForEach because we don't want to save a new array
-        excludedFields.forEach(el => delete queryObj[el]);
-
-        //console.log(req.query, queryObj);
-        
-        //mongoose methods.
-        //find returns a query that's why we are able to chain the below methods.
-
-        // 1b. Advanced filtering.
-        //convert obj to string.
-        // use let so we can transmute queryStr.
-        let queryStr = JSON.stringify(queryObj);
-
-        //{ duration: { gte: '5' }, difficulty: 'easy' }
-        // { difficulty: 'easy', duration: {$gte: 5}}
-        // gte, gt, lte, lt
-        // \b any of these, /g all occurances, 
-        // replace the match with $match
-        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
-        //console.log(JSON.parse(queryStr));
-        
-        let query = Tour.find(JSON.parse(queryStr));
-
-        //2. Sorting, sort=-, on the query will cause a descending sort.
-        if(req.query.sort){
-            const sortBy = req.query.sort.split(',').join(' ');
-            //console.log(sortBy);
-            query = query.sort(sortBy);
-            // sort('price ratingsAverage')
-        } else {
-            //default sort criteria, if none specified.
-            //query = query.sort('-createdAt');
-            //had to adjust default sorting to _id for paging to work.
-            query = query.sort('_id')
-        }
-
-        // 3. Field limiting.
-        if(req.query.fields) {
-            console.log('field limiting...')
-            const fields = req.query.fields.split(',').join(' ');
-            query = query.select(fields);
-        } else {
-            //default.
-            // - minus prefix excludes that field.
-            query = query.select('-__v');
-        }
-
-        //4. Paginations.
-        //page=2&limit=10, page 1: 1-10, page 2: 11-20, page 3 21-30
-        //we will calculate the skip value based on page value
-        const page = req.query.page * 1 || 1;
-        const limit = req.query.limit * 1 || 100;
-        const skip = (page-1) * limit;
-        //console.log(page);
-        //console.log(skip);
-
-        query = query.skip(skip).limit(limit);
-
-        //check if paging beyond number of available pages.
-        if(req.query.page) {
-            const numTours = await Tour.countDocuments();
-            if(skip >= numTours) throw new Error('This page does not exist');
-        }
-
         //EXECUTE QUERY
-        const tours = await query;
-        //query.sort().select().skip().limit();
-        //each of these queries returns a object and we can chain them.
-        // by await.
+        const features = new APIFeatures(Tour.find(), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
 
-        
+        //const tours = await query;
+        const tours = await features.query;
+
         //SEND RESPONSE
         res.status(200).json({ 
             status: 'success',
@@ -127,7 +66,7 @@ exports.getAllTours = async (req, res) => {
     }catch (err) {
         res.status(404).json({
             status: 'fail',
-            message: err.message
+            message: err
         });
     }
 };
