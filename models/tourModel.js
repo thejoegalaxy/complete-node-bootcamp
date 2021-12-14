@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 //Tour Schema
 const tourSchema = new mongoose.Schema({
@@ -8,6 +9,7 @@ const tourSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+    slug: String,
     duration: {
         type: Number,
         required: [true, 'A tour must have a duration']
@@ -64,6 +66,28 @@ const tourSchema = new mongoose.Schema({
 tourSchema.virtual('durationWeeks').get(function() {
     return this.duration / 7;
 })
+
+//DOCUMENT MIDDLEWARE: runs before .save() and .create().
+tourSchema.pre('save', function(next) {
+    //this is the current document being processed before .save() and .create()
+    //console.log(this)
+    //note: slug must be a part of the schema to be persistent
+    //for this .pre middleware to work.
+    this.slug = slugify(this.name, {lower: true});
+    next();
+});
+
+//pre save hook or pre save middleware
+// tourSchema.pre('save', (next) => {
+//     console.log('Will save document...');
+//     next();
+// })
+
+// tourSchema.post('save', (doc, next) => {
+//     //post has access to completed document with doc.
+//     console.log(doc);
+//     next();
+// });
 
 //Tour model creation.
 const Tour = mongoose.model('Tour', tourSchema);
