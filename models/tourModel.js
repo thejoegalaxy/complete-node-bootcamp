@@ -114,6 +114,16 @@ tourSchema.post(/^find/, function(docs, next) {
     next();
 });
 
+//AGGREGATION MIDDLEWARE
+tourSchema.pre('aggregate', function(next) {
+    //we are adding another element to the front of the array using unshift.
+    // the aggregate we are adding is the same.
+    // removing from the aggregate output all the doucments that have secretTour set to true.
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+    console.log(this.pipeline());
+    next();
+});
+
 //Tour model creation.
 const Tour = mongoose.model('Tour', tourSchema);
 
