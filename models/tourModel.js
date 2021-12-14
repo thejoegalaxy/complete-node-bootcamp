@@ -53,7 +53,17 @@ const tourSchema = new mongoose.Schema({
         select: false, //limit and exclude this from sending to client.
     },
     startDates: [Date]
+}, 
+{ //this will specifiy that the virtual data be included in output.
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true}
 });
+
+//virtual data, will be there when we get data.  calculated.
+// business logic calcuated in the model not controller.
+tourSchema.virtual('durationWeeks').get(function() {
+    return this.duration / 7;
+})
 
 //Tour model creation.
 const Tour = mongoose.model('Tour', tourSchema);
