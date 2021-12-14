@@ -125,28 +125,6 @@ exports.createTour = async (req, res) => {
             message: err
         })
     }
-    
-    // middleware 
-    //calculate newId by getting last tour id in array and incrementing.
-    // const newId = tours[tours.length - 1].id + 1;
-    // // create new object with newid and tour object sent by POST.
-    // const newTour = {id: newId, ...req.body};
-
-    // // push newTour into the tour array.
-    // tours.push(newTour);
-
-    // // write stringify JSON object to file.
-    // fs.writeFile(`${__dirname}/starter/dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
-        
-    //     //send response 201 and new tour object back to client.
-    //     res.status(201).json({
-    //         status: 'success',
-    //         data: {
-    //             tour: newTour
-    //         }
-    //     })
-    // })
-    //res.send('Done');
 
 };
 
@@ -167,3 +145,98 @@ exports.getTour = async (req, res) => {
         })
     }
 };
+
+exports.getTourStats = async (req, res) => {
+    try {
+        const stats = await Tour.aggregate([
+            {
+                $match: { ratingsAverage: { $gte: 4.5 }}
+            },
+            {
+                $group: {
+                    _id: { $toUpper: '$difficulty'},
+                    //_id: '$ratingsAverage',
+                    numTours: { $sum: 1},
+                    numRatings: { $sum: '$ratingsQuantity'},
+                    avgRating: { $avg: '$ratingsAverage'},
+                    avgPrice: { $avg: '$price'},
+                    minPrice: {$min: '$price'},
+                    maxPrice: {$max: '$price'},
+                }
+            },
+            {
+                $sort: { avgPrice: 1}
+            }
+            // {
+            //     $match: { _id: { $ne: 'EASY' }}
+            // }
+        ]);
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                stats
+            }
+        })
+
+    } catch (err) {
+        res.status(404).json({
+            status: 'fail',
+            message: 'Invalid data sent!'
+        })
+    }
+}
+
+exports.getMonthlyPlan = async (req, res) => {
+    try {
+        const year = req.params.year * 1;
+
+        const plan = await Tour.aggregate([
+            {
+                $unwind: '$startDates'
+            },
+            {
+                $match: {
+                    startDates: {
+                        $gte: new Date(`${year}-01-01`),
+                        $lte: new Date(`${year}-12-31`),
+                    }
+                }   
+            },
+            {
+                $group: {
+                    _id: { $month: '$startDates'},
+                    numTourStarts: { $sum: 1 },
+                    tours: { $push: '$name'}
+                }
+            },
+            {
+                $addFields: { month: '$_id'}
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            },
+            {
+                $sort: {numTourStarts: -1}
+            },
+            {
+                $limit: 12
+            }
+        ]);
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                plan
+            }
+        })
+
+    } catch (err) {
+        res.status(404).json({
+            status: 'fail',
+            message: 'Invalid data sent!'
+        })
+    }
+}
