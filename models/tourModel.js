@@ -54,7 +54,11 @@ const tourSchema = new mongoose.Schema({
         default: Date.now(),
         select: false, //limit and exclude this from sending to client.
     },
-    startDates: [Date]
+    startDates: [Date],
+    secretTour: {
+        type: Boolean,
+        default: false
+    }
 }, 
 { //this will specifiy that the virtual data be included in output.
     toJSON: {virtuals: true},
@@ -88,6 +92,27 @@ tourSchema.pre('save', function(next) {
 //     console.log(doc);
 //     next();
 // });
+
+//QUERY MIDDLEWARE
+// find find hook
+//tourSchema.pre('find', function(next) {
+    //regular expression all functions that sart with find.
+    //so this will work for findbyone findbyid, etc.
+tourSchema.pre(/^find/, function(next) {
+    // this is now a query object so we can chain all the methods that we have for queries.
+    //this query middleware will filter the secretTour(s) out..
+    //console.log('find hook...')
+    this.find({secretTour: { $ne: true } })
+
+    this.start = Date.now();
+    next();
+});
+
+tourSchema.post(/^find/, function(docs, next) {
+    console.log(`Query took ${Date.now() - this.start} ms`);
+    //console.log(docs);
+    next();
+});
 
 //Tour model creation.
 const Tour = mongoose.model('Tour', tourSchema);
