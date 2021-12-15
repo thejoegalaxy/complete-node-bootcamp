@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon server.js",
-    "start:prod": "nodemon server.js"
+    "start:prod": "nodemon server.js",
+    "debug": "ndb server.js"
   },
   "author": "Carlos",
   "license": "ISC",
@@ -14,7 +15,8 @@
     "express": "^4.17.1",
     "mongoose": "^5.13.13",
     "morgan": "^1.10.0",
-    "slugify": "^1.6.3"
+    "slugify": "^1.6.3",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "eslint": "^8.4.1",

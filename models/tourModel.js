@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const validator = require('validator');
 
 //Fat model, thin controller 
 //Tour Schema
@@ -10,7 +11,8 @@ const tourSchema = new mongoose.Schema({
         unique: true,
         trim: true,
         maxlength: [40, 'A tour name must have at most 40 characters'],
-        minlength: [10, 'A tour name must have at least 10 characters']
+        minlength: [10, 'A tour name must have at least 10 characters'],
+        //validate: [validator.isAlpha, 'Tour name must only contain alpha characters']
     },
     slug: String,
     duration: {
@@ -43,7 +45,19 @@ const tourSchema = new mongoose.Schema({
         type: Number,
         required: [true,'A tour must have a price']
     },
-    priceDiscount: Number,
+    priceDiscount: {
+
+        type:Number,
+        validate: {
+            validator: function(val) {
+                return val < this.price; 
+                //this will only work when creating a new document not on update.
+                //real function to access this. return true
+                //when priceDiscount < price. false when not to reject data.
+            },
+            message: 'Discount price ({VALUE}) must be less than price.'
+        }
+    },
     summary: {
         type: String,
         trim: true,
