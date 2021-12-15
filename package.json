@@ -4,8 +4,8 @@
   "description": "Learning node, express, and mongoDB",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js",
-    "start:prod": "nodemon server.js",
+    "start": "nodemon -L server.js",
+    "start:prod": "nodemon -L server.js",
     "debug": "ndb server.js"
   },
   "author": "Carlos",
