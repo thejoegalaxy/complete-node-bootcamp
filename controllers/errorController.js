@@ -14,6 +14,16 @@ const handleDuplicateFieldsDB = (err) => {
   return new AppError(message, 400);
 };
 
+//handle validation errors.
+const handleValidationErrorDB = (err) => {
+  //loop through errors object for each element return the el.message.
+  const errors = Object.values(err.errors).map((el) => el.message);
+
+  // join the array of error messages with a ". " and create the message.
+  const message = `Invalid input data. ${errors.join('. ')}`;
+  return new AppError(message, 400);
+};
+
 // development error handler response.
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -61,6 +71,7 @@ module.exports = (err, req, res, next) => {
     //castError is for example bad id value on a query.
     if (err.name === 'CastError') error = handleCastErrorDB(error);
     if (err.code === 11000) error = handleDuplicateFieldsDB(err);
+    if (err.name === 'ValidationError') error = handleValidationErrorDB(err);
     sendErrorProd(error, res);
   }
 };
