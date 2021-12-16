@@ -1,4 +1,20 @@
-// development error handler response
+const AppError = require('../utils/appError');
+
+//bad id value on query.
+const handleCastErrorDB = (err) => {
+  const message = `Invalid ${err.path}: ${err.value}.`;
+  return new AppError(message, 400);
+};
+
+//duplicate field value.
+const handleDuplicateFieldsDB = (err) => {
+  const value = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
+  //console.log(value);
+  const message = `Duplicate field value: ${value}  Please use another value!`;
+  return new AppError(message, 400);
+};
+
+// development error handler response.
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -39,6 +55,12 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    sendErrorProd(err, res);
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax
+    let error = { ...err };
+    //console.log(err.name, err.code);
+    //castError is for example bad id value on a query.
+    if (err.name === 'CastError') error = handleCastErrorDB(error);
+    if (err.code === 11000) error = handleDuplicateFieldsDB(err);
+    sendErrorProd(error, res);
   }
 };
