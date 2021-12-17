@@ -54,3 +54,33 @@ exports.login = catchAsync(async (req, res, next) => {
     token,
   });
 });
+
+//protect routes.
+exports.protect = catchAsync(async (req, res, next) => {
+  let token;
+  // 1. Getting token and check if it's there.
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    //can't define a variable in the if block because it will lose scope.
+    //es6 blocked scope.
+    //hence declare above: let token;
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  console.log(token);
+
+  if (!token) {
+    return next(
+      new AppError('You are not logged in!  Please log in to gain access.', 401)
+    );
+  }
+  // 2. Validate the token, Verification
+
+  // 3. Check if user still exists.
+
+  // 4. Check if user changed password after the token was issued.
+
+  next();
+});

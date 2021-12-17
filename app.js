@@ -26,6 +26,7 @@ app.use(express.static(`${__dirname}/starter/public`));
 //middleware creating a requestTime value.
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
+  //console.log(req.headers);
   next();
 });
 
