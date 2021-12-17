@@ -38,7 +38,8 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Please provide a password'],
       unique: false,
       trim: true,
-      //      minlength: [8, 'A user password must have at least 8 characters'],
+      minlength: [8, 'A user password must have at least 8 characters'],
+      select: false, //this will stop leaking out the password field.
       //   validate: [
       //     validator.isStrongPassword,
       //     'User must have a strong password',
@@ -86,6 +87,17 @@ userSchema.pre('save', async function (next) {
 
   next();
 });
+
+// compare candidate password with user password using bcrypt compare.
+// instance method.
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  //same returns true.  false if password are not same.
+  // candidatePassword not hashed.  userPassword is hashed.
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 //User model creation.
 const User = mongoose.model('User', userSchema);
