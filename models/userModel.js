@@ -66,6 +66,7 @@ const userSchema = new mongoose.Schema(
       //     'User must have a strong passwordConfirm',
       //   ],
     },
+    passwordChangedAt: Date,
   }
   //   {
   //     //this will specifiy that the virtual data be included in output.
@@ -99,6 +100,21 @@ userSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    //console.log(this.passwordChangedAt, JWTTimestamp);
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    //console.log(changedTimestamp, JWTTimestamp);
+    return JWTTimestamp < changedTimestamp;
+    // created JWTTimestamp at 100 < then changedTimestamp at 200, returns true.
+    // meaning password was changed after.
+  }
+  //false means not changed.
+  return false;
+};
 //User model creation.
 const User = mongoose.model('User', userSchema);
 
