@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const slugify = require('slugify');
+//const slugify = require('slugify');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
@@ -33,6 +33,11 @@ const userSchema = new mongoose.Schema(
       validate: [validator.isEmail, 'Please provide a valid email address'],
     },
     photo: String,
+    role: {
+      type: String,
+      enum: ['user', 'guide', 'lead-guide', 'admin'],
+      default: 'user',
+    },
     password: {
       type: String,
       required: [true, 'Please provide a password'],
