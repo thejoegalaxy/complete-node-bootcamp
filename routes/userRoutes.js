@@ -10,6 +10,12 @@ router.post('/signup', authController.signup);
 //login user.
 router.post('/login', authController.login);
 
+//forgot password, will receive email address.
+router.post('/forgotPassword', authController.forgotPassword);
+
+// reset password, will receive the token and new password.
+router.post('/resetPassword/:token', authController.resetPassword);
+
 router
   .route('/')
   .get(userController.getAllUsers)

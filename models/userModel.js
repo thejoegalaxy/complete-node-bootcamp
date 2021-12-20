@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 //const slugify = require('slugify');
 const validator = require('validator');
@@ -72,6 +73,8 @@ const userSchema = new mongoose.Schema(
       //   ],
     },
     passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   }
   //   {
   //     //this will specifiy that the virtual data be included in output.
@@ -120,6 +123,24 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   //false means not changed.
   return false;
 };
+
+userSchema.methods.createPasswordResetToken = function () {
+  //console.log('createPasswordResetToken');
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  console.log({ resetToken }, this.passwordResetToken);
+
+  // 10 minute to expire.
+  this.passwordResetExpires = Date.now() + 10 * 60 * 60 * 1000;
+
+  return resetToken; //send the unencrypted password reset token via email.
+};
+
 //User model creation.
 const User = mongoose.model('User', userSchema);
 
