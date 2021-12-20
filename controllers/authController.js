@@ -50,12 +50,16 @@ exports.signup = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
+  //console.log(email);
+
   // 1. check if email & password exists.
   if (!email || !password) {
     return next(new AppError('Please provide an email and password', 400));
   }
   // 2. check if there is a user for the email that is posted ;exists & password is correct.
   const user = await User.findOne({ email }).select('+password');
+
+  console.log(user);
 
   // if there's no user the || right side will not execute.
   // if there's a wrong password or no user, create an global error.

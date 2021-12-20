@@ -1,6 +1,9 @@
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -11,11 +14,15 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 // 1. GLOBAL Middleware
+// Set Security HTTP headers
+app.use(helmet());
+
+//development logging.
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// rate limiter
+// rate limiter; limit requests from same api.
 const limiter = rateLimit({
   max: 100, //number of requests. helps against ddos and brute force attacks.
   windowMs: 60 * 60 * 1000, // per hour in milliseconds.
@@ -23,10 +30,20 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-app.use(express.json());
+//Body parser, reading data from body into req.body.
+app.use(express.json({ limit: '10kb' })); //will limit the body to 10kb.
+
+// data sanitization against NoSQL query injection.
+// filters out all $ and .
+app.use(mongoSanitize());
+
+// data sanitization against XSS.
+app.use(xss());
+
+// serving static files.
 app.use(express.static(`${__dirname}/starter/public`));
 
-//Our own middleware.
+// Our own middleware.
 // The order of the middlewares below matters.
 // app.use((req, res, next) => {
 //   console.log('Hello from the middleware 😎');
