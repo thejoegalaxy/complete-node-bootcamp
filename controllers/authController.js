@@ -183,9 +183,34 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest('hex');
 
-  const user = await User.findOne({ passwordResetToken: hashedToken });
+  //also need to check if the passwordResetExpires property is greater than now.
+  //which would mean it is in the future, which means it hasn't expired yet.
+  //find the user for the token and check if the token has expired.
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gte: Date.now() },
+  });
 
   //2. If token has not expired, and there is a user, set the new password
+  if (!user) {
+    return next(new AppError('Token is invalid or has expired', 400));
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined; //delete reset token
+  user.passwordResetExpires = undefined; //delete expired.
+  //console.log(user);
+  await user.save();
+  //we always use save with passwords because we want to run the validators & middlware.
+
   //3. Update changedPasswordAt property for the user.
+  //user.changedPasswordAt = Date.now();
   //4. Log the user in, send JWT
+  // 3. if everything is ok, send the token to client.
+  const token = signToken(user._id);
+  res.status(200).json({
+    status: 'success',
+    token,
+  });
 });

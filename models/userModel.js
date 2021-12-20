@@ -97,6 +97,15 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+//if the password has not been modified or this is a new document just return.
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  //otherwise set passwordChangedAt to now.
+  this.passwordChangedAt = Date.now() - 1000; //puts it 1 second in the past.
+  next();
+});
+
 // compare candidate password with user password using bcrypt compare.
 // instance method.
 userSchema.methods.correctPassword = async function (
