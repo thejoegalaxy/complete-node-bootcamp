@@ -14,10 +14,13 @@ const userSchema = new mongoose.Schema(
       trim: true,
       //   maxlength: [32, 'A user name must have at most 32 characters'],
       //   minlength: [3, 'A user name must have at least 3 characters'],
-      validate: [
-        validator.isAlpha,
-        'User name must only contain alpha characters',
-      ],
+      validate: {
+        validator: function (val) {
+          const value = val.split(' ').join('');
+          return validator.isAlpha(value);
+        },
+        message: 'User name must only contain alpha characters',
+      },
     },
     slug: String,
     email: {
