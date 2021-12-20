@@ -78,6 +78,11 @@ const userSchema = new mongoose.Schema(
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
   }
   //   {
   //     //this will specifiy that the virtual data be included in output.
@@ -106,6 +111,14 @@ userSchema.pre('save', function (next) {
 
   //otherwise set passwordChangedAt to now.
   this.passwordChangedAt = Date.now() - 1000; //puts it 1 second in the past.
+  next();
+});
+
+// regex, all queries with find.
+userSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  // only documents with active set to true.
+  this.find({ active: { $ne: false } });
   next();
 });
 
