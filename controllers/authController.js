@@ -59,7 +59,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // 2. check if there is a user for the email that is posted ;exists & password is correct.
   const user = await User.findOne({ email }).select('+password');
 
-  console.log(user);
+  console.log(password, user.password);
 
   // if there's no user the || right side will not execute.
   // if there's a wrong password or no user, create an global error.
