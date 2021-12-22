@@ -8,9 +8,11 @@ const hpp = require('hpp');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+
 //importing routers
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
@@ -72,8 +74,9 @@ app.use((req, res, next) => {
   next();
 });
 
-//tourRouter, userRouter middleware
+//tourRouter, userRouter, reviewRouter middleware
 // mounting routers.
+app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tours', tourRouter);
 
