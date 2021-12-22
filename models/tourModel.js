@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
+//const User = require('./userModel'); //this was used when we embedded users into tour.
 
 //Fat model, thin controller
 //Tour Schema
@@ -107,6 +108,13 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+    //guides: Array, //this one was used when we were embedding from array of user id.
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User', //this ref. effectively creates the relationship.
+      },
+    ],
   },
   {
     //this will specifiy that the virtual data be included in output.
@@ -131,6 +139,17 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
+// tourSchema.pre('save', async function (next) {
+//   //this will result in an array of promises.
+//   // for each guide in guides find the user that matches by id.
+//   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+//   //this create an array of user documents from the array of promises
+//   // and overrite the array of ids with an array of user documents. embedding those users
+//   // that are guides for this tour.  Promise.all will run all the promises at the same time.
+//   this.guides = await Promise.all(guidesPromises);
+
+//   next();
+// });
 //pre save hook or pre save middleware
 // tourSchema.pre('save', (next) => {
 //     console.log('Will save document...');
@@ -155,6 +174,15 @@ tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
 
   this.start = Date.now();
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt', //only excluding passwordChangedAt??
+  });
+
   next();
 });
 

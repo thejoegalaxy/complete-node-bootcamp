@@ -112,7 +112,15 @@ exports.createTour = catchAsync(async (req, res, next) => {
 
 exports.getTour = catchAsync(async (req, res, next) => {
   //Tour.findOne({_id: req.params.id})
-  console.log(req.params.id);
+  //console.log(req.params.id);
+  //we add a .populate('guides) that will get the user references object ids
+  // and populate the user data as if the data has always been embedded.
+  // only in the query not in the actual database.
+  // const tour = await Tour.findById(req.params.id).populate({
+  //   path: 'guides',
+  //   select: '-__v -passwordChangedAt', //only excluding passwordChangedAt??
+  // });
+  //refactored .populate to a pre middleware.
   const tour = await Tour.findById(req.params.id);
 
   if (!tour) {
