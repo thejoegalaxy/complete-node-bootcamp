@@ -129,6 +129,14 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+//virtual populate for reviews. So we don't have to keep an array of reviews
+// that could grow indefinitely. tourController has a .populate('reviews)
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour', //the field in review Model where tour id is stored.
+  localField: '_id',
+});
+
 //DOCUMENT MIDDLEWARE: runs before .save() and .create().
 tourSchema.pre('save', function (next) {
   //this is the current document being processed before .save() and .create()

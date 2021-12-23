@@ -42,12 +42,17 @@ const reviewSchema = new mongoose.Schema(
 );
 
 reviewSchema.pre(/^find/, function (next) {
+  //   this.populate({
+  //     path: 'tour',
+  //     select: 'name', //
+  //   }).populate({
+  //     path: 'user',
+  //     select: 'name', //
+  //   });
+  //we turned off tour populate because it was creating a chain of populates.
   this.populate({
-    path: 'tour',
-    select: 'name', //
-  }).populate({
     path: 'user',
-    select: 'name', //
+    select: 'name photo',
   });
 
   next();
