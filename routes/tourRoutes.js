@@ -4,6 +4,8 @@ const tourController = require('../controllers/tourController');
 
 const authController = require('../controllers/authController');
 
+const reviewController = require('../controllers/reviewController');
+
 const router = express.Router();
 
 //router.param('id',tourController.checkID);
@@ -33,6 +35,22 @@ router
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour
+  );
+
+// POST /tour/234fad4/reviews
+// GET /tour/234fad4/reviews
+// nested route.  clear parent child relationship
+//doing it this way will have the tourid in the url and the userid will be the current user logged in.
+// reviews is clearly a child of tours.
+// GET /tour/234fad4/reviews/djdjs
+// Created a Review route in the Tour router so that
+// a review can be created on a route.
+router
+  .route('/:tourId/reviews')
+  .post(
+    authController.protect,
+    authController.restrictTo('user'),
+    reviewController.createReview
   );
 
 module.exports = router;

@@ -29,6 +29,11 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
 });
 
 exports.createReview = catchAsync(async (req, res, next) => {
+  //Allow netsted routes.
+  // specifying them when they are not in the body.
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id; //req.user, we get from the protect middleware.
+
   //console.log(req.body);
   const newReview = await Review.create(req.body);
   //console.log(newReview);
