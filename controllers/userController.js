@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const factory = require('./handlerFactory');
 
 //passing in req.body object & a list of allowed fields: name, email.
 // for each element in req.body if that element is included in allowedFields: name, email,
@@ -88,9 +89,13 @@ exports.updateUser = (req, res) => {
     message: 'This route is not yet defined!',
   });
 };
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
-  });
-};
+
+// TODO: need to add permissions to admin only to delete user.
+exports.deleteUser = factory.deleteOne(User);
+
+// exports.deleteUser = (req, res) => {
+//   res.status(500).json({
+//     status: 'error',
+//     message: 'This route is not yet defined!',
+//   });
+// };
