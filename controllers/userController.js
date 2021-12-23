@@ -83,19 +83,9 @@ exports.createUser = (req, res) => {
     message: 'This route is not yet defined!',
   });
 };
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
-  });
-};
 
 // TODO: need to add permissions to admin only to delete user.
+// update also only for administrators.
+//Do Not update passwords with this.
 exports.deleteUser = factory.deleteOne(User);
-
-// exports.deleteUser = (req, res) => {
-//   res.status(500).json({
-//     status: 'error',
-//     message: 'This route is not yet defined!',
-//   });
-// };
+exports.updateUser = factory.updateOne(User);
