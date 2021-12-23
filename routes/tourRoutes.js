@@ -3,8 +3,8 @@ const express = require('express');
 const tourController = require('../controllers/tourController');
 
 const authController = require('../controllers/authController');
-
-const reviewController = require('../controllers/reviewController');
+const reviewRouter = require('./reviewRoutes');
+//const reviewController = require('../controllers/reviewController');
 
 const router = express.Router();
 
@@ -15,6 +15,27 @@ const router = express.Router();
 // if not, send back 400 (bad request)
 // Add it to the post handler stack.
 //router.param('name',tourController.checkBody);
+
+// POST /tour/234fad4/reviews
+// GET /tour/234fad4/reviews
+// nested route.  clear parent child relationship
+//doing it this way will have the tourid in the url and the userid will be the current user logged in.
+// reviews is clearly a child of tours.
+// GET /tour/234fad4/reviews/djdjs
+// Created a Review route in the Tour router so that
+// a review can be created on a route.
+// router
+//   .route('/:tourId/reviews')
+//   .post(
+//     authController.protect,
+//     authController.restrictTo('user'),
+//     reviewController.createReview
+//   );
+
+//since routers are just middleware we can say when we encounter a route like this.
+//use reviewRouter.
+
+router.use('/:tourId/reviews', reviewRouter);
 
 router
   .route('/top-5-cheap')
@@ -35,22 +56,6 @@ router
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour
-  );
-
-// POST /tour/234fad4/reviews
-// GET /tour/234fad4/reviews
-// nested route.  clear parent child relationship
-//doing it this way will have the tourid in the url and the userid will be the current user logged in.
-// reviews is clearly a child of tours.
-// GET /tour/234fad4/reviews/djdjs
-// Created a Review route in the Tour router so that
-// a review can be created on a route.
-router
-  .route('/:tourId/reviews')
-  .post(
-    authController.protect,
-    authController.restrictTo('user'),
-    reviewController.createReview
   );
 
 module.exports = router;

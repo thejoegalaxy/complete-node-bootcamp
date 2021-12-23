@@ -76,9 +76,9 @@ app.use((req, res, next) => {
 
 //tourRouter, userRouter, reviewRouter middleware
 // mounting routers.
-app.use('/api/v1/reviews', reviewRouter);
-app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 //route handler for all un matched routes.
 app.all('*', (req, res, next) => {
