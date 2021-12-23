@@ -5,15 +5,16 @@ const AppError = require('../utils/appError');
 
 // Route Handlers
 exports.getAllReviews = catchAsync(async (req, res, next) => {
-  //EXECUTE QUERY
-  //   const features = new APIFeatures(Review.find(), req.query)
-  //     .filter()
-  //     .sort()
-  //     .limitFields()
-  //     .paginate();
-  // const reviews = await features.query;
+  let filter = {};
 
-  const reviews = await Review.find();
+  // if there is a tourId, then the filter object will be used
+  // to get all reviews for that tourId.  If no tourId then we'll get all the reviews
+  // because filter will be empty.
+  if (req.params.tourId) filter = { tour: req.params.tourId };
+
+  //console.log(req.params.tourId);
+
+  const reviews = await Review.find(filter);
   //const tours = await query;
 
   //SEND RESPONSE
