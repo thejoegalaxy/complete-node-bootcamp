@@ -1,8 +1,7 @@
 //const fs = require('fs');
 const Tour = require('../models/tourModel');
-const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+//const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
 //read once into variable tours.
@@ -44,59 +43,12 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 // Route Handlers
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  //EXECUTE QUERY
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
+exports.getAllTours = factory.getAll(Tour);
 
-  //const tours = await query;
-  const tours = await features.query;
-
-  //SEND RESPONSE
-  res.status(200).json({
-    status: 'success',
-    //requestedAt: req.requestTime, //setting header property for requesteAt time.
-    results: tours.length, //size of array.
-    // send all tours as the data.
-    data: {
-      tours,
-    },
-  });
-});
-
-//update factory.
 exports.updateTour = factory.updateOne(Tour);
-// deleteTour factory.
 exports.deleteTour = factory.deleteOne(Tour);
 exports.createTour = factory.createOne(Tour);
-
-exports.getTour = catchAsync(async (req, res, next) => {
-  //Tour.findOne({_id: req.params.id})
-  //console.log(req.params.id);
-  //we add a .populate('guides) that will get the user references object ids
-  // and populate the user data as if the data has always been embedded.
-  // only in the query not in the actual database.
-  // const tour = await Tour.findById(req.params.id).populate({
-  //   path: 'guides',
-  //   select: '-__v -passwordChangedAt', //only excluding passwordChangedAt??
-  // });
-  //refactored .populate to a pre middleware.
-  const tour = await Tour.findById(req.params.id).populate('reviews');
-
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
+exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
