@@ -3,35 +3,31 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 
+//like a mini application
 const router = express.Router();
 
 //signup user.
 router.post('/signup', authController.signup);
 //login user.
 router.post('/login', authController.login);
-
 //forgot password, will receive email address.
 router.post('/forgotPassword', authController.forgotPassword);
-
 // reset password, will receive the token and new password.
 router.patch('/resetPassword/:token', authController.resetPassword);
 
-router.get(
-  '/me',
-  authController.protect,
-  userController.getMe,
-  userController.getUser
-);
+//since this middleware will run in order.
+// protect all the routes that come after this point.
+// so we can remove authController.protect from the below.
+router.use(authController.protect);
 
+router.get('/me', userController.getMe, userController.getUser);
 //updateMe
-router.patch('/updateMe', authController.protect, userController.updateMe);
-router.delete('/deleteMe', authController.protect, userController.deleteMe);
+router.patch('/updateMe', userController.updateMe);
+router.delete('/deleteMe', userController.deleteMe);
+router.patch('/updateMyPassword', authController.updatePassword);
 
-router.patch(
-  '/updateMyPassword',
-  authController.protect,
-  authController.updatePassword
-);
+//below routes are admin restricted.
+router.use(authController.restrictTo('admin', 'lead-guide'));
 
 router
   .route('/')
