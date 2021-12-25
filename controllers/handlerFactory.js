@@ -80,6 +80,8 @@ exports.getAll = (Model) =>
       .paginate();
 
     //const doc = await query;
+    //.explain used to review executionStats in evaluating indexing in Postman.
+    //const doc = await features.query.explain();
     const doc = await features.query;
 
     //SEND RESPONSE

@@ -123,6 +123,14 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+// study the query access and can use index for heaving queries. read/write pattern.
+//Indexing on price 1 = ascending -1 descending order.
+//this improves the query on price a lot.
+//tourSchema.index({ price: 1 });
+//compound index.
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+
 //virtual data, will be there when we get data.  calculated.
 // business logic calcuated in the model not controller.
 tourSchema.virtual('durationWeeks').get(function () {
