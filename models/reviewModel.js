@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
+const Tour = require('./tourModel');
 
 // review / rating / createdAt / ref to tour / ref to user.
 //Fat model, thin controller
@@ -58,6 +59,38 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  //this points to the model.
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+  console.log(stats);
+  //update Tour document with these stats.
+  await Tour.findByIdAndUpdate(tourId, {
+    ratingsQuantity: stats[0].nRating,
+    ratingsAverage: stats[0].avgRating,
+  });
+};
+
+//this will be called after saving a new review.
+//which will calculate the Average Rating and number of ratings
+//as programmed above.
+reviewSchema.post('save', function () {
+  //this points to the current review.
+  // constructor is the Model.
+  // Allowing us to call this before the below model creation.
+  this.constructor.calcAverageRatings(this.tour);
+  //post does not have access to next.
+});
 //Review model creation.
 const Review = mongoose.model('Review', reviewSchema);
 

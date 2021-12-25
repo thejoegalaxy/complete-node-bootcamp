@@ -51,6 +51,7 @@ exports.createTour = factory.createOne(Tour);
 exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
+  //calling aggregate on the Model.
   const stats = await Tour.aggregate([
     {
       $match: { ratingsAverage: { $gte: 4.5 } },
