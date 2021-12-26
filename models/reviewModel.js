@@ -73,12 +73,22 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
       },
     },
   ]);
-  console.log(stats);
-  //update Tour document with these stats.
-  await Tour.findByIdAndUpdate(tourId, {
-    ratingsQuantity: stats[0].nRating,
-    ratingsAverage: stats[0].avgRating,
-  });
+  //console.log(stats);
+
+  if (stats.length > 0) {
+    //update Tour document with these stats.
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: stats[0].nRating,
+      ratingsAverage: stats[0].avgRating,
+    });
+  } else {
+    //update Tour document with these stats.
+    await Tour.findByIdAndUpdate(tourId, {
+      //just set the Tour default values when no ratings.
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5,
+    });
+  }
 };
 
 //this will be called after saving a new review.
@@ -91,6 +101,24 @@ reviewSchema.post('save', function () {
   this.constructor.calcAverageRatings(this.tour);
   //post does not have access to next.
 });
+
+//findByIdAndUpdate, shorthand for findOneAndUpdate(currentId)
+//findByIdAndDelete
+//implement a pre middlware for these events.
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.findOne(); //create an r (review) var on this to pass to the post middleware.
+  //console.log(this.r);
+  next();
+});
+//only have access to query middleware, not document middleware.
+
+reviewSchema.post(/^findOneAnd/, async function () {
+  //this.r.constructor is the Model, allowing us to call calcAverageRatings
+  //and this.r (review) gives us access to the tour(id) to be able to calculate.
+  //this.findOne(); does NOT work here, query has already been executed.
+  await this.r.constructor.calcAverageRatings(this.r.tour);
+});
+
 //Review model creation.
 const Review = mongoose.model('Review', reviewSchema);
 
