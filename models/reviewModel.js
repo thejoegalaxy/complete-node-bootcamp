@@ -42,6 +42,9 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+//this index will ensure that tour and user must be unique.
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre(/^find/, function (next) {
   //   this.populate({
   //     path: 'tour',
@@ -73,7 +76,7 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
       },
     },
   ]);
-  //console.log(stats);
+  console.log(stats);
 
   if (stats.length > 0) {
     //update Tour document with these stats.
@@ -107,7 +110,7 @@ reviewSchema.post('save', function () {
 //implement a pre middlware for these events.
 reviewSchema.pre(/^findOneAnd/, async function (next) {
   this.r = await this.findOne(); //create an r (review) var on this to pass to the post middleware.
-  //console.log(this.r);
+  console.log(this.r);
   next();
 });
 //only have access to query middleware, not document middleware.
