@@ -140,6 +140,7 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
   const lng = latlngsplit[1];
   //console.log(lat, lng);
 
+  //might need error handling if unit is not provided.
   //need to convert to radians.  using the circumference of the earth in the right units.
   const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
 
@@ -163,6 +164,51 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
     results: tours.length,
     data: {
       data: tours,
+    },
+  });
+});
+
+exports.getDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const latlngsplit = latlng.split(',');
+
+  const lat = latlngsplit[0];
+  const lng = latlngsplit[1];
+
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
+  if (!lat || !lng) {
+    next(
+      (new AppError(
+        'Please provide latitude and longitude in the format lat,lng.'
+      ),
+      400)
+    );
+  }
+
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng * 1, lat * 1],
+        },
+        distanceField: 'distance',
+        distanceMultiplier: multiplier, //converts from meters to km.
+      },
+    },
+    {
+      $project: {
+        //these are the only fields we want. specified.
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: distances,
     },
   });
 });
