@@ -1,7 +1,7 @@
 //const fs = require('fs');
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utils/catchAsync');
-//const AppError = require('../utils/appError');
+const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
 //read once into variable tours.
@@ -126,6 +126,43 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       plan,
+    },
+  });
+});
+
+// /tours-within/233/center/33.941585, -118.012144/unit/mi parameters way, looks cleaner.
+//   '/tours-within/:distance/center/:latlng/:unit',
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params; //destructuring to get all variables
+  const latlngsplit = latlng.split(',');
+
+  const lat = latlngsplit[0];
+  const lng = latlngsplit[1];
+  //console.log(lat, lng);
+
+  //need to convert to radians.  using the circumference of the earth in the right units.
+  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+
+  if (!lat || !lng) {
+    next(
+      (new AppError(
+        'Please provide latitude and longitude in the format lat,lng.'
+      ),
+      400)
+    );
+  }
+  console.log(distance, lat, lng, unit);
+
+  //find tours with a startLocation within a radius of centerSphere[lng,lat]
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      data: tours,
     },
   });
 });

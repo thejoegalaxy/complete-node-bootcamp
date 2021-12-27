@@ -131,6 +131,7 @@ const tourSchema = new mongoose.Schema(
 //compound index.
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 
 //virtual data, will be there when we get data.  calculated.
 // business logic calcuated in the model not controller.

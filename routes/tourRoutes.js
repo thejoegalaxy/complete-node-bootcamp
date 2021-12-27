@@ -25,6 +25,13 @@ router
     tourController.getMonthlyPlan
   );
 router.route('/tour-stats').get(tourController.getTourStats);
+
+// /tours-distance?distance=233,center=-40,45&unit=mi query string way.
+// /tours-distance/233/center/-40,45/unit/mi parameters way, looks cleaner.
+router
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getToursWithin);
+
 router
   .route('/')
   //.get(authController.protect, tourController.getAllTours) //protect the route.
