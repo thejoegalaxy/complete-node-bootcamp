@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -16,7 +17,16 @@ const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
+//view engine.
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 // 1. GLOBAL Middleware
+// serving static files.
+// note: had to change this to establish public in /starter.
+// for base.pug to work with css, etc.
+app.use(express.static(path.join(__dirname, '/starter/public')));
+
 // Set Security HTTP headers
 app.use(helmet());
 
@@ -57,9 +67,6 @@ app.use(
   })
 );
 
-// serving static files.
-app.use(express.static(`${__dirname}/starter/public`));
-
 // Our own middleware.
 // The order of the middlewares below matters.
 // app.use((req, res, next) => {
@@ -71,11 +78,22 @@ app.use(express.static(`${__dirname}/starter/public`));
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   //console.log(req.headers);
+  //console.log(__dirname);
+
   next();
 });
 
 //tourRouter, userRouter, reviewRouter middleware
 // mounting routers.
+// 3. Routes.
+app.get('/', (req, res) => {
+  res.status(200).render('base', {
+    //passing local variables in the pug file.
+    tour: 'The Forest Hiker',
+    user: 'Jonas',
+  }); //express will look for the template base in the views folder.
+});
+
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);

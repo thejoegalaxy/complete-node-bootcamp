@@ -1,0 +1,18 @@
+doctype html
+html 
+    head 
+        link(rel='stylesheet' type='text/css' href='css/style.css')
+        link(rel='shortcut icon' type='image/png' href='img/favicon.png')
+        title Natours | #{tour}
+        //- interpolation
+    body
+        h1=tour 
+        //- tour is the passed in local variable to the pug template file.
+        h2= user.toUpperCase()
+        //- buffered code, can use simple javascript.
+        - const x = 9;
+        //- unbuffered code.
+        h2= 2 * x
+        p This is just some text
+
+
