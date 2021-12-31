@@ -29,6 +29,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, '/starter/public')));
 
 // Set Security HTTP headers
+//had to add if Production because helmet was stopping mapbox.  need a fix??
 if (process.env.NODE_ENV === 'production') {
   app.use(helmet());
 }
@@ -90,6 +91,7 @@ app.use((req, res, next) => {
 // mounting routers.
 // 3. Routes.
 app.use('/', viewRouter);
+app.use('/login', viewRouter);
 //app.use('/tours', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
