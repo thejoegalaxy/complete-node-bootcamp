@@ -84,8 +84,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     //es6 blocked scope.
     //hence declare above: let token;
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    //if the token wasn't in the authorization header
+    //check if it is in the jwt cookie.
+    token = req.cookies.jwt;
   }
-
   //console.log(token);
 
   if (!token) {
