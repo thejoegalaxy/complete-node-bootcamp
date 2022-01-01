@@ -1,8 +1,8 @@
 /* eslint-disable */
 
 const login = async (email, password) => {
-  //alert(email, password);
-  console.log(email, password);
+  //-alert(email, password);
+  //-console.log(email, password);
   try {
     //axios, returns a promise.
     const res = await axios({
@@ -13,11 +13,21 @@ const login = async (email, password) => {
         password,
       },
     });
-    console.log(res);
+
+    //- if login success, alert, redirect to / after 1.5sec.
+    if (res.data.status === 'success') {
+      //alert('Logged in successfully!');
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 500);
+    }
+
+    //console.log(res);
   } catch (err) {
-    console.log(err.response.data);
+    alert(err.response.data.message);
   }
 };
+
 //event listener listening for the submit event on our login form.
 //form class.  select form element.  event when user clicks the submit buttom
 // browser will fire off this event. we will have access to that event in the callback function.

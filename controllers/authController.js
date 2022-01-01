@@ -126,6 +126,40 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+//for rendered pages..no errors!
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  //console.log(req.headers);
+  if (req.cookies.jwt) {
+    // 1. Validate the token, Verification
+    // we will promisify this..
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET
+    );
+    //console.log(decoded.iat);
+
+    // 2. Check if user still exists.
+    const currentUser = await User.findById(decoded.id);
+    //console.log(decoded);
+
+    if (!currentUser) {
+      return next();
+    }
+    //3. Check if user changed password after the token was issued.
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+      return next();
+    }
+
+    //THERE IS A LOGGED IN USER
+    //next leads us to the next route handler which is to grant access to the protected route.
+    // we can put any variables in res.locals., such as res.locals.user, our pug will have access to it.
+    res.locals.user = currentUser;
+    return next();
+  }
+  //in case there is no cookie.
+  next();
+});
+
 // passing in roles who have restricted permissions.
 exports.restrictTo =
   (...roles) =>
