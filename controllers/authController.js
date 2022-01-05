@@ -59,7 +59,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // 2. check if there is a user for the email that is posted ;exists & password is correct.
   const user = await User.findOne({ email }).select('+password');
 
-  console.log(password, user.password);
+  //console.log(password, user.password);
 
   // if there's no user the || right side will not execute.
   // if there's a wrong password or no user, create an global error.
@@ -152,8 +152,9 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
     //THERE IS A LOGGED IN USER
     //next leads us to the next route handler which is to grant access to the protected route.
-    // we can put any variables in res.locals., such as res.locals.user, our pug will have access to it.
+    // we can put any variables in res.locals., such as res.locals.user, our all pug will have access to it.
     res.locals.user = currentUser;
+    //console.log(currentUser);
     return next();
   }
   //in case there is no cookie.

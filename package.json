@@ -6,11 +6,15 @@
   "scripts": {
     "start": "nodemon -L server.js",
     "start:prod": "nodemon -L server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "watch:js": "parcel watch ./starter/public/js/index.js --out-dir ./starter/public/js --out-file bundle.js",
+    "build:js": "parcel watch ./starter/public/js/index.js --out-dir ./starter/public/js --public-url /js --out-file bundle.js"
   },
   "author": "Carlos",
   "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "dotenv": "^10.0.0",
@@ -37,6 +41,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.27.1",
+    "parcel-bundler": "^1.12.5",
     "prettier": "^2.5.1"
   }
 }

@@ -1,8 +1,10 @@
 /* eslint-disable */
 // grabbing the data-locations from our map element from tour.pug map section.
 // we converted the locations data to a string and then here back to JSON.
+// TODO: fix non tour pages get a syntax error because no map element.
 const locations = JSON.parse(document.getElementById('map').dataset.locations);
-console.log(locations);
+// console.log(locations);
+
 mapboxgl.accessToken =
   'pk.eyJ1IjoidGhlam9lZ2FsYXh5IiwiYSI6ImNreHM3MmIzbDVrbHIycXBmb25paDZuc3gifQ.y4N0oIW-R5kXeUiqhogVJA';
 
