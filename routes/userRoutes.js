@@ -10,6 +10,9 @@ const router = express.Router();
 router.post('/signup', authController.signup);
 //login user.
 router.post('/login', authController.login);
+//logout user.
+router.get('/logout', authController.logout);
+
 //forgot password, will receive email address.
 router.post('/forgotPassword', authController.forgotPassword);
 // reset password, will receive the token and new password.

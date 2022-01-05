@@ -46,6 +46,19 @@ const login = async (email, password) => {
   }
 };
 
+const logout = async () => {
+  try {
+    const res = await axios({
+      method: 'GET',
+      url: 'http://localhost:3000/api/v1/users/logout',
+    });
+
+    if (res.data.status === 'success') location.reload(true); //important so won't reload from cache.
+  } catch (err) {
+    alert('Error logging out! Try again.');
+  }
+};
+
 // console.log('Hello from parcel');
 //event listener listening for the submit event on our login form.
 //form class.  select form element.  event when user clicks the submit buttom
@@ -59,6 +72,11 @@ if (document.querySelector('.form')) {
     const password = document.getElementById('password').value;
     login(email, password);
   });
+}
+
+//add event listener for the logout class, if it exists.
+if (document.querySelector('.nav__el--logout')) {
+  document.querySelector('.nav__el--logout').addEventListener('click', logout);
 }
 
 //- include this login file into the base.pug.
