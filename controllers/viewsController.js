@@ -23,6 +23,10 @@ exports.getTour = catchAsync(async (req, res, next) => {
     path: 'reviews',
     fields: 'review rating user',
   });
+
+  if (!tour) {
+    return next(new AppError('There is no tour found with that name.', 404));
+  }
   //console.log(tour);
 
   // 2. build template
