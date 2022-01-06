@@ -64,8 +64,8 @@ const logout = async () => {
 //form class.  select form element.  event when user clicks the submit buttom
 // browser will fire off this event. we will have access to that event in the callback function.
 // added an if for the .form to get rid of syntax error occuring on non login pages with no form.
-if (document.querySelector('.form')) {
-  document.querySelector('.form').addEventListener('submit', (e) => {
+if (document.querySelector('.form--login')) {
+  document.querySelector('.form--login').addEventListener('submit', (e) => {
     e.preventDefault();
     //grab email & password values
     const email = document.getElementById('email').value;
