@@ -130,7 +130,9 @@ exports.protect = catchAsync(async (req, res, next) => {
   //Grant access to protected route.
   //next leads us to the next route handler which is to grant access to the protected route.
   req.user = currentUser;
+  res.locals.user = currentUser;
   //a way to share from middleware to middleware req.user.
+  //also .locals.user will share with all templates.
 
   next();
 });

@@ -39,8 +39,14 @@ exports.getTour = catchAsync(async (req, res, next) => {
 });
 
 exports.getLoginForm = (req, res) => {
-  console.log('hello from viewsController.login');
+  //console.log('hello from viewsController.login');
   res.status(200).render('login', {
     title: 'Login to your account',
   });
 };
+
+exports.getAccount = catchAsync(async (req, res) => {
+  res.status(200).render('account', {
+    title: 'Your account',
+  });
+});

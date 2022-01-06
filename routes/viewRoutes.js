@@ -13,11 +13,13 @@ const router = express.Router();
 
 //this will run for all other routes.
 //put in the middleware stack for each and every route.
-router.use(authController.isLoggedIn);
+//changing to only call isLoggedIn for routes that aren't protected instead of every route.
+//router.use(authController.isLoggedIn);
 
-router.get('/', viewsController.getOverview);
-router.get('/tour/:slug', viewsController.getTour);
-router.get('/login', viewsController.getLoginForm);
+router.get('/', authController.isLoggedIn, viewsController.getOverview);
+router.get('/tour/:slug', authController.isLoggedIn, viewsController.getTour);
+router.get('/login', authController.isLoggedIn, viewsController.getLoginForm);
+router.get('/me', authController.protect, viewsController.getAccount);
 // /login route.
 
 module.exports = router;
