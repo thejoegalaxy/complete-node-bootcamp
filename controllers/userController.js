@@ -51,8 +51,8 @@ exports.getMe = (req, res, next) => {
 };
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log(req.file);
-  console.log(req.body);
+  // console.log(req.file);
+  // console.log(req.body);
   // 1. create error if user POSTs password data.
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -68,6 +68,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   // we will filter the req.body data and only allow updating of name & email by creating filteredBody.
   // in the future we might add more fields like image, etc.
   const filteredBody = filterObj(req.body, 'name', 'email');
+  if (req.file) filteredBody.photo = req.file.filename;
+  //adding photo property to the object that is going to be updated.
 
   console.log(filteredBody);
 
