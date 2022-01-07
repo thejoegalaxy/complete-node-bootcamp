@@ -1,5 +1,4 @@
 const express = require('express');
-
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 
@@ -25,7 +24,12 @@ router.use(authController.protect);
 
 router.get('/me', userController.getMe, userController.getUser);
 //updateMe
-router.patch('/updateMe', userController.updateMe);
+//we pass to single the name of the field that is going to hold the image to upload.
+router.patch(
+  '/updateMe',
+  userController.uploadUserPhoto,
+  userController.updateMe
+);
 router.delete('/deleteMe', userController.deleteMe);
 router.patch('/updateMyPassword', authController.updatePassword);
 
