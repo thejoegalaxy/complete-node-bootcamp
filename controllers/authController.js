@@ -73,6 +73,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 //sending a cookie with the same name, dummy text, 10 sec expiry.
 exports.logout = function (req, res) {
+  console.log('from logout');
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
@@ -170,6 +171,7 @@ exports.isLoggedIn = async (req, res, next) => {
       //console.log(currentUser);
       return next();
     } catch (err) {
+      console.log('isLoggedIn error.');
       return next();
     }
   }

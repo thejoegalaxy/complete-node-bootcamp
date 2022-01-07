@@ -53,7 +53,7 @@ const logout = async () => {
       url: 'http://localhost:3000/api/v1/users/logout',
     });
 
-    if (res.data.status === 'success') location.reload(true); //important so won't reload from cache.
+    if ((res.data.status = 'success')) location.reload(true); //important so won't reload from cache.
   } catch (err) {
     alert('Error logging out! Try again.');
   }
