@@ -38,11 +38,20 @@ const updateSettings = async (data, type) => {
 if (document.querySelector('.form-user-data')) {
   document.querySelector('.form-user-data').addEventListener('submit', (e) => {
     e.preventDefault();
+
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+
+    console.log(form);
+
     //grab name & email values
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
+    // const name = document.getElementById('name').value;
+    // const email = document.getElementById('email').value;
     // console.log(name, email);
-    updateSettings({ name, email }, 'data');
+    //axios ajax will recognize form as an object and work.
+    updateSettings(form, 'data');
   });
 }
 
