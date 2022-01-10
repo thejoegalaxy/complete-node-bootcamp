@@ -5,19 +5,6 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
-// don't need this, if not saving image to file because will use sharp 1st.
-// const multerStorage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'starter/public/img/users');
-//   },
-//   filename: (req, file, cb) => {
-//     //user-userid-timestamp.jpeg
-//     //user-7575757-333222.jpeg
-//     const ext = file.mimetype.split('/')[1];
-//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
-//   },
-// });
-
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
