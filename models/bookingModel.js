@@ -31,6 +31,7 @@ bookingSchema.pre(/^find/, function (next) {
     path: 'tour',
     select: 'name', //only selecting name from tour.
   });
+  next();
 });
 //Booking model creation.
 const Booking = mongoose.model('Booking', bookingSchema);

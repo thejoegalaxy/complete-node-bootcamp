@@ -47,3 +47,9 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
   //create a new request. will hit viewRoute for '/'. temporary solution.
   res.redirect(req.originalUrl.split('?')[0]);
 });
+
+exports.creatingBooking = factory.createOne(Booking);
+exports.getBooking = factory.getOne(Booking);
+exports.getAllBookings = factory.getAll(Booking);
+exports.updateBooking = factory.updateOne(Booking);
+exports.deleteBooking = factory.deleteOne(Booking);
