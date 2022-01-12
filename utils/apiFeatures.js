@@ -64,7 +64,7 @@ class APIFeatures {
   limitFields() {
     // 3. Field limiting.
     if (this.queryString.fields) {
-      console.log('field limiting...');
+      //console.log('field limiting...');
       const fields = this.queryString.fields.split(',').join(' ');
       this.query = this.query.select(fields);
     } else {

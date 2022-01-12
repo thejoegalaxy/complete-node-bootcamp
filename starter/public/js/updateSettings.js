@@ -44,7 +44,7 @@ if (document.querySelector('.form-user-data')) {
     form.append('email', document.getElementById('email').value);
     form.append('photo', document.getElementById('photo').files[0]);
 
-    console.log(form);
+    //console.log(form);
 
     //grab name & email values
     // const name = document.getElementById('name').value;

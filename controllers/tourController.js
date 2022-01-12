@@ -99,7 +99,7 @@ exports.resizeTourImages = catchAsync(async (req, res, next) => {
 
 //middleware for aliasTopTours
 exports.aliasTopTours = (req, res, next) => {
-  console.log('aliasTopTours...');
+  //console.log('aliasTopTours...');
   req.query.limit = '5';
   req.query.sort = '-ratingsAverage,price';
   req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
@@ -216,7 +216,7 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
       400)
     );
   }
-  console.log(distance, lat, lng, unit);
+  //console.log(distance, lat, lng, unit);
 
   //find tours with a startLocation within a radius of centerSphere[lng,lat]
   const tours = await Tour.find({
