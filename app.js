@@ -33,8 +33,8 @@ app.use(express.static(path.join(__dirname, '/starter/public')));
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
-    "script-src  'self' api.mapbox.com",
-    "script-src-elem 'self' api.mapbox.com"
+    "script-src  'self' api.titles.mapbox.com",
+    "script-src-elem 'self' api.titles.mapbox.com"
   );
   next();
 });
