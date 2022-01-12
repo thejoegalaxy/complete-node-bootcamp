@@ -28,7 +28,8 @@ app.set('views', path.join(__dirname, 'views'));
 // serving static files.
 // note: had to change this to establish public in /starter.
 // for base.pug to work with css, etc.
-app.use(express.static(path.join(__dirname, '/starter/public')));
+//app.use(express.static(path.join(__dirname, '/starter/public')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 // Set Security HTTP headers
 //had to add if Production because helmet was stopping mapbox.  need a fix??
