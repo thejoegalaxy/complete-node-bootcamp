@@ -20,6 +20,15 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "script-src  'self' api.titles.mapbox.com",
+    "script-src-elem 'self' api.titles.mapbox.com"
+  );
+  next();
+});
+
 //view engine.
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -29,15 +38,6 @@ app.set('views', path.join(__dirname, 'views'));
 // note: had to change this to establish public in /starter.
 // for base.pug to work with css, etc.
 app.use(express.static(path.join(__dirname, '/starter/public')));
-
-app.use((req, res, next) => {
-  res.setHeader(
-    'Content-Security-Policy',
-    "script-src  'self' api.titles.mapbox.com",
-    "script-src-elem 'self' api.titles.mapbox.com"
-  );
-  next();
-});
 
 // Set Security HTTP headers
 //had to add if Production because helmet was stopping mapbox.  need a fix??
