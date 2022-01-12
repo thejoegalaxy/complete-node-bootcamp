@@ -204,11 +204,11 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
-tourSchema.post(/^find/, function (docs, next) {
-  console.log(`Query took ${Date.now() - this.start} ms`);
-  //console.log(docs);
-  next();
-});
+// tourSchema.post(/^find/, function (docs, next) {
+//   console.log(`Query took ${Date.now() - this.start} ms`);
+//   //console.log(docs);
+//   next();
+// });
 
 //AGGREGATION MIDDLEWARE
 //commented out this aggregate middleware for #geoNear to be 1st as required.
