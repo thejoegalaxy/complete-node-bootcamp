@@ -30,6 +30,15 @@ app.set('views', path.join(__dirname, 'views'));
 // for base.pug to work with css, etc.
 app.use(express.static(path.join(__dirname, '/starter/public')));
 
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "script-src  'self' api.mapbox.com",
+    "script-src-elem 'self' api.mapbox.com"
+  );
+  next();
+});
+
 // Set Security HTTP headers
 //had to add if Production because helmet was stopping mapbox.  need a fix??
 // if (process.env.NODE_ENV === 'production') {
