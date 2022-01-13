@@ -20,14 +20,8 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
-// app.use((req, res, next) => {
-//   res.setHeader(
-//     'Content-Security-Policy',
-//     "script-src  'self' api.titles.mapbox.com",
-//     "script-src-elem 'self' api.titles.mapbox.com"
-//   );
-//   next();
-// });
+app.enable('trust proxy');
+//enable trust proxy for heroku. combined with authController createSendToken x-forward-proto.
 
 //view engine.
 app.set('view engine', 'pug');

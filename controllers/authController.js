@@ -12,23 +12,31 @@ const signToken = (id) => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
 
-  const cookieOptions = {
+  // const cookieOptions = {
+  //   expires: new Date(
+  //     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+  //   ),
+  //   //secure: true, //https only; we only want this option in production.
+  //   httpOnly: true, //receive and store only.
+  //   secure: req.secure || req.headers['x=forwarded-proto'] === 'https',
+  // };
+
+  //console.log(cookieOptions);
+
+  //if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  //console.log(token);
+  res.cookie('jwt', token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     //secure: true, //https only; we only want this option in production.
     httpOnly: true, //receive and store only.
-  };
-
-  //console.log(cookieOptions);
-
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-
-  //console.log(token);
-  res.cookie('jwt', token, cookieOptions);
+    secure: req.secure || req.headers['x=forwarded-proto'] === 'https', //heroku proxy forward.
+  });
 
   //remove password from the output.
   user.password = undefined;
@@ -49,7 +57,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   //console.log(url);
   await new Email(newUser, url).sendWelcome();
 
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -73,7 +81,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   // 3. if everything is ok, send the token to client.
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 //sending a cookie with the same name, dummy text, 10 sec expiry.
@@ -278,7 +286,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   //user.changedPasswordAt = Date.now();
   //4. Log the user in, send JWT
   // 3. if everything is ok, send the token to client.
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -301,5 +309,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   // Log user in, send JWT
   // 3. if everything is ok, send the token to client.
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
