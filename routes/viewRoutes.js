@@ -8,10 +8,11 @@ const POLICY =
   "default-src 'self' https://*.mapbox.com ;" +
   "base-uri 'self';block-all-mixed-content;" +
   "font-src 'self' https: data:;" +
+  "frame-src 'self' js.stripe.com ;" +
   "frame-ancestors 'self';" +
-  //"img-src / 'self' blob: data:;" +
+  "img-src 'self' blob: data:;" +
   "object-src 'none';" +
-  "script-src https: js.stripe.com cdn.jsdelivr.net cdnjs.cloudflare.com api.mapbox.com 'self' blob: ;" +
+  "script-src https: cdn.jsdelivr.net cdnjs.cloudflare.com api.mapbox.com 'self' blob: ;" +
   "script-src-attr 'none';" +
   "style-src 'self' https: 'unsafe-inline';" +
   'upgrade-insecure-requests;';
