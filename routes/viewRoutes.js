@@ -9,7 +9,7 @@ const POLICY =
   "base-uri 'self';block-all-mixed-content;" +
   "font-src 'self' https: data:;" +
   "frame-ancestors 'self';" +
-  //"img-src http://localhost:8000 'self' blob: data:;" +
+  "img-src / 'self' blob: data:;" +
   "object-src 'none';" +
   "script-src https: cdn.jsdelivr.net cdnjs.cloudflare.com api.mapbox.com 'self' blob: ;" +
   "script-src-attr 'none';" +
