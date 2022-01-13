@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
@@ -28,6 +29,18 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // 1. GLOBAL Middleware
+//Implement CORS
+app.use(cors()); //this will add Access-Control-Allow-Origin * for cross origin resource sharing.
+//note: cors() could be added to a specific router if only wanted to allow just a specific route of api.
+//api.natours.com, front end at natours.com
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+
+//pre-flight phase for non simple requests.
+app.options('*', cors());
+//app.options('/api/v1/tours/:id',cors()); //only a tour could be delteted or patched if we use this.
+
 // serving static files.
 // note: had to change this to establish public in /starter.
 // for base.pug to work with css, etc.
