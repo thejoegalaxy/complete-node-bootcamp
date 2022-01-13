@@ -52,3 +52,11 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
   });
 });
+
+//heroku sends SIGTERM periodically, we will handle it gracefully.
+process.on('SIGTERM', () => {
+  console.log('👍SIGTERM RECEIVED. Shutting down gracefully... ');
+  server.close(() => {
+    console.log('✨Process terminated!');
+  });
+});
