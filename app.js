@@ -35,17 +35,9 @@ app.use(express.static(path.join(__dirname, '/starter/public')));
 
 // Set Security HTTP headers
 //had to add if Production because helmet was stopping mapbox.  need a fix??
-// if (process.env.NODE_ENV === 'production') {
-//   //app.use(helmet());
-//   // app.use(
-//   //   helmet.contentSecurityPolicy({
-//   //     useDefaults: true,
-//   //     directives: {
-//   //       "script-src": ["'self'", "cdn.jsdelivr.net/npm/axios/dist/axios.min.js"]
-//   //     },
-//   //   })
-//   // );
-// }
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet());
+}
 
 //development logging.
 if (process.env.NODE_ENV === 'development') {
