@@ -10,4 +10,4 @@
 
 const alertMessage = document.querySelector('body').dataset.alert;
 
-if (alert) alert(`Success: ${alertMessage}`);
+if (alertMessage) alert(`Success: ${alertMessage}`);
