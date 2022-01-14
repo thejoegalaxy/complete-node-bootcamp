@@ -39,7 +39,7 @@ router.use((req, res, next) => {
 // stripe processing. this is tempoary.
 router.get(
   '/',
-  bookingController.createBookingCheckout,
+  //bookingController.createBookingCheckout,
   authController.isLoggedIn,
   viewsController.getOverview
 );
