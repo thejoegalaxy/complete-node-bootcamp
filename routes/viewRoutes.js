@@ -37,6 +37,10 @@ router.use((req, res, next) => {
 //router.use(authController.isLoggedIn);
 // noted add createBookingCheckout to '/' route because this is the route we'll hit on successful
 // stripe processing. this is tempoary.
+
+//this will run for all request coming into our web server.
+router.use(viewsController.alerts);
+
 router.get(
   '/',
   //bookingController.createBookingCheckout,

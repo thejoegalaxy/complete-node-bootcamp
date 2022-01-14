@@ -7,3 +7,7 @@
 
 // const locations = JSON.parse(document.getElementById('map').dataset.locations);
 // displayMap(locations); //this change didn't work. rolled it back.
+
+const alertMessage = document.querySelector('body').dataset.alert;
+
+if (alert) alert(`Success: ${alertMessage}`);
