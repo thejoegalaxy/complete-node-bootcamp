@@ -36,6 +36,7 @@ app.use(cors()); //this will add Access-Control-Allow-Origin * for cross origin 
 // app.use(cors({
 //   origin: 'https://www.natours.com'
 // }))
+//TODO: get cors working with CSP in viewsRoute.js.
 
 //pre-flight phase for non simple requests.
 app.options('*', cors());
